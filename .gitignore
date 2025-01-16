@@ -1,2 +1,5 @@
 # Arquivo de variáveis de ambiente
 .env
+
+# Diretório de versionamento
+.history
