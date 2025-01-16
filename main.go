@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/ibmdb/go_ibm_db"
 	"github.com/joho/godotenv"
@@ -24,7 +25,14 @@ func main() {
 	fmt.Println("dsn configurada:", dsn)
 }
 
-func dsn_builder(dbHost string, dbPort string, dbUser string, dbPassword string) string {
+// imprime o log com timestamp
+func PrintTime(text string) {
+	timestamp := time.Now().Format("2006-01-02 15:04:05")
+	fmt.Print("[" + timestamp + "] " + text + "\n")
+}
+
+// monta a string de conexão com a dsn
+func dsnBuilder(dbHost string, dbPort string, dbUser string, dbPassword string) string {
 	dsn := "HOSTNAME=" + dbHost + ";PORT=" + dbPort + ";DATABASE=HUGOPIET;UID=" + dbUser + ";PWD=" + dbPassword
 	return dsn
 }
