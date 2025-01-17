@@ -12,18 +12,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("o arquivo .env não pôde ser carregado.", err)
-	}
-
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-
 	PrintTime("Building DSN...")
-	dsn := dsnBuilder(dbHost, dbPort, dbUser, dbPassword)
+	dsn := dsnBuilder(getDotEnv())
 
 	PrintTime("Connecting to Database...")
 	db, err := sql.Open("go_ibm_db", dsn)
@@ -37,6 +27,21 @@ func main() {
 		log.Fatal("Error while testing connection with Database:", err)
 	}
 	PrintTime("Connection established.")
+}
+
+// carrega os valores do .env
+func getDotEnv() (string, string, string, string) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Unable to load the file .env.", err)
+	}
+
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+
+	return dbHost, dbPort, dbUser, dbPassword
 }
 
 // imprime o log com timestamp
