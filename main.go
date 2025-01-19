@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -27,6 +29,32 @@ func main() {
 		log.Fatal("Error while testing connection with Database:", err)
 	}
 	PrintTime("Connection established.")
+
+	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+			return
+		}
+		var requestBody struct {
+			Query string `json:"query"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+			http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+		}
+
+		results, err := runQuery(db, requestBody.Query)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error processing query: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(results)
+	})
+
+	PrintTime("Starting on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 // carrega os valores do .env
@@ -56,21 +84,23 @@ func dsnBuilder(dbHost string, dbPort string, dbUser string, dbPassword string) 
 	return dsn
 }
 
-func runQuery(db *sql.DB, query string) {
+func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
 	start := time.Now()
 
 	// processa query
 	rows, err := db.Query(query)
 	if err != nil {
-		log.Fatal("Error while processing query:", err)
+		return nil, err
 	}
 	defer rows.Close()
 
 	// busca nome das colunas
 	columns, err := rows.Columns()
 	if err != nil {
-		log.Fatal("Error while getting column names:", err)
+		return nil, err
 	}
+
+	results := make([]map[string]interface{}, 0)
 
 	for rows.Next() {
 		// cria um slice de interfaces para armazenar os valores
@@ -83,22 +113,33 @@ func runQuery(db *sql.DB, query string) {
 		// lê a linha
 		err := rows.Scan(valuePtrs...)
 		if err != nil {
-			log.Fatal("Error while scanning results: ", err)
+			return nil, err
 		}
 
-		// imprime os valores
-		// result := make(map[string]interface{})
-		// for i, col := range columns {
-		// 	val := values[i]
-		// 	result[col] = val
-		// }
-		// fmt.Println(result)
+		row := make(map[string]interface{})
+		for i, col := range columns {
+			var v interface{}
+			val := values[i]
+
+			switch b := val.(type) {
+			case []byte:
+				v = string(b)
+			default:
+				v = b
+			}
+
+			row[col] = v
+		}
+		results = append(results, row)
 	}
+
 	// verifica por erros na iteração
 	if err = rows.Err(); err != nil {
-		log.Fatal("Error while iterating: ", err)
+		return nil, err
 	}
 
 	// imprime o tempo de execução
 	fmt.Printf("Query processed in %s\n", time.Since(start))
+
+	return results, nil
 }
