@@ -53,8 +53,8 @@ func main() {
 		json.NewEncoder(w).Encode(results)
 	})
 
-	PrintTime("Starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	PrintTime("Starting on :40500")
+	log.Fatal(http.ListenAndServe(":40500", nil))
 }
 
 // carrega os valores do .env
