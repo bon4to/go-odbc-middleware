@@ -86,12 +86,15 @@ func dsnBuilder(dbHost string, dbPort string, dbSourceName string, dbUser string
 }
 
 func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
-	start := time.Now()
+	if query == "" {
+		return nil, fmt.Errorf("query cannot be empty")
+	}
 
-	// processa query
+	start := time.Now()
 	rows, err := db.Query(query)
 	if err != nil {
-		return nil, err
+		log.Printf("Query execution error: %v", err)
+		return nil, fmt.Errorf("failed to execute query")
 	}
 	defer rows.Close()
 
