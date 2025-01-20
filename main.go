@@ -58,7 +58,7 @@ func main() {
 }
 
 // carrega os valores do .env
-func getDotEnv() (string, string, string, string) {
+func getDotEnv() (string, string, string, string, string) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Unable to load the file .env.", err)
@@ -66,10 +66,11 @@ func getDotEnv() (string, string, string, string) {
 
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
+	dbSourceName := os.Getenv("DB_DSN")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 
-	return dbHost, dbPort, dbUser, dbPassword
+	return dbHost, dbPort, dbSourceName, dbUser, dbPassword
 }
 
 // imprime o log com timestamp
@@ -79,8 +80,8 @@ func PrintTime(text string) {
 }
 
 // monta a string de conexão com a dsn
-func dsnBuilder(dbHost string, dbPort string, dbUser string, dbPassword string) string {
-	dsn := "HOSTNAME=" + dbHost + ";PORT=" + dbPort + ";DATABASE=HUGOPIET;UID=" + dbUser + ";PWD=" + dbPassword
+func dsnBuilder(dbHost string, dbPort string, dbSourceName string, dbUser string, dbPassword string) string {
+	dsn := "HOSTNAME=" + dbHost + ";PORT=" + dbPort + ";DATABASE=" + dbSourceName + ";UID=" + dbUser + ";PWD=" + dbPassword
 	return dsn
 }
 
