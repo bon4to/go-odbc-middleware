@@ -35,12 +35,14 @@ func main() {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
 		}
+
 		var requestBody struct {
 			Query string `json:"query"`
 		}
 
 		if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 			http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+			return
 		}
 
 		results, err := runQuery(db, requestBody.Query)
@@ -49,8 +51,15 @@ func main() {
 			return
 		}
 
+			Columns []string                 `json:"columns"`
+			Data    []map[string]interface{} `json:"data"`
+		}{
+			Columns: results.Columns,
+			Data:    results.Rows,
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(results)
+		json.NewEncoder(w).Encode(response)
 	})
 
 	PrintTime("Starting on :40500")
@@ -85,7 +94,12 @@ func dsnBuilder(dbHost string, dbPort string, dbSourceName string, dbUser string
 	return dsn
 }
 
-func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
+type QueryResult struct {
+	Columns []string
+	Rows    []map[string]interface{}
+}
+
+func runQuery(db *sql.DB, query string) (*QueryResult, error) {
 	if query == "" {
 		return nil, fmt.Errorf("query cannot be empty")
 	}
@@ -98,7 +112,7 @@ func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
 	}
 	defer rows.Close()
 
-	// busca nome das colunas
+	// obtem as colunas
 	columns, err := rows.Columns()
 	if err != nil {
 		return nil, err
@@ -137,7 +151,6 @@ func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
 		results = append(results, row)
 	}
 
-	// verifica por erros na iteração
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
@@ -145,5 +158,5 @@ func runQuery(db *sql.DB, query string) ([]map[string]interface{}, error) {
 	// imprime o tempo de execução
 	fmt.Printf("Query processed in %s\n", time.Since(start))
 
-	return results, nil
+	return &QueryResult{Columns: columns, Rows: results}, nil
 }
