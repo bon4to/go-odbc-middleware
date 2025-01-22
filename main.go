@@ -51,6 +51,7 @@ func main() {
 			return
 		}
 
+		response := struct {
 			Columns []string                 `json:"columns"`
 			Data    []map[string]interface{} `json:"data"`
 		}{
