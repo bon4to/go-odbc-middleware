@@ -63,7 +63,7 @@ func main() {
 		json.NewEncoder(w).Encode(response)
 	})
 
-	PrintTime("Starting on :40500")
+	log.Println("Starting on :40500")
 	log.Fatal(http.ListenAndServe(":40500", nil))
 }
 
@@ -83,10 +83,6 @@ func getDotEnv() (string, string, string, string, string) {
 	return dbHost, dbPort, dbSourceName, dbUser, dbPassword
 }
 
-// imprime o log com timestamp
-func PrintTime(text string) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Print("[" + timestamp + "] " + text + "\n")
 }
 
 // monta a string de conexão com a dsn
