@@ -80,19 +80,17 @@ The server will start on port `40500` and expose one endpoint:
 ## ⚠️ Security Warning
 
 This API executes raw SQL. This is dangerous if exposed to untrusted users.
+🛠️ Upcoming Improvements
 
-### Best Practices:
+### 🛠️ Upcoming Improvements
+- Token-based authentication (e.g. HMAC or JWT)
+- Configurable query whitelisting
+- Logging control and access auditing
+- Rate limiting to prevent abuse
 
-- Restrict usage via **HMAC or token-based authentication**.
-- Validate and sanitize inputs.
-- Use read-only DB users.
-- Consider limiting SQL to whitelisted queries only.
-
-## 📄 License
-
-MIT License.
+> 💡 Feel free to contribute or open issues for feature requests.
 
 ## 🧠 Author
 
-Maintained by bon4to.
+Maintained by @lucas-bonato.
 
