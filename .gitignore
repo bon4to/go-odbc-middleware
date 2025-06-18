@@ -3,4 +3,9 @@
 *.exe
 
 # local history files
-.history
+.history/
+.idea/
+*.iml
+
+# macOS
+.DS_Store
