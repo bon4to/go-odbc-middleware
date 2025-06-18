@@ -1,8 +1,6 @@
-# Arquivo de variáveis de ambiente
+
 .env
+*.exe
 
-# Arquivo compilado
-/app.exe
-
-# Diretório de versionamento
+# local history files
 .history
