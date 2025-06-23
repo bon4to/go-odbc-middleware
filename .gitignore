@@ -1,11 +1,39 @@
-
-.env
+# Binaries
 *.exe
+*.dll
+*.so
+*.dylib
+*.out
 
-# local history files
-.history/
-.idea/
-*.iml
+# Go build output
+*.a
+*.o
+*.mod
+*.sum
+
+# Executável do projeto
+cde_api
 
 # macOS
 .DS_Store
+
+# Logs
+*.log
+
+# Ambientes
+.env
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Históricos locais
+.history/
+
+# Git
+.git
+.gitignore
+
+# Test output
+coverage.out
