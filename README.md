@@ -2,36 +2,19 @@
 
 A lightweight HTTP service built in Go to execute SQL queries against IBM DB2 databases using the [go\_ibm\_db](https://github.com/ibmdb/go_ibm_db) driver.
 
-## 📦 Requirements
+## Requirements
 
-- Go 1.20+
-- IBM DB2 CLI Driver installed (for macOS: `dsdriver`)
+- Golang 1.20+
+
 - `.env` file with database credentials
 
-## 🧪 .env Structure
+  > Duplicate `.env.example` to `.env` and fill in the values.
 
-Create a `.env` file in the root directory with the following variables:
+- IBM DB2 CLI Driver installed
 
-```env
-DB_HOST=your-db-host
-DB_PORT=50000
-DB_USER=your-db-user
-DB_PASSWORD=your-password
-DB_DSN_1=your-database-name-1
-DB_DSN_2=your-database-name-2
-```
+## How to build
 
-You can add more `DB_DSN_n` entries if needed. The client must specify the `source` index.
-
-## 🔧 Build Instructions
-
-### 🖥️ macOS (native build)
-
-```bash
-go build -o cde_api main.go
-```
-
-### 🪟 Cross-compilation for Windows
+### Cross-compilation for Windows
 
 You need to set `GOOS` and `GOARCH`:
 
@@ -41,15 +24,39 @@ GOOS=windows GOARCH=amd64 go build -o cde_api.exe main.go
 
 > ⚠️ The IBM DB2 driver must be available in the build machine. For Windows, you may need to compile inside a Windows VM or Docker container with the proper environment.
 
-## 🚀 Running the Server
+## Running the Server
 
 ```bash
-./cde_api
+./cde_api.exe
 ```
 
-The server will start on port `40500` and expose one endpoint:
+The server will start on port `40500` and expose one endpoint.
 
-## 📡 Endpoint
+## Running as a Service (Recommended)
+
+This application can (and should) be installed as a system service for production use.
+
+### Windows (with NSSM)
+
+1. [Download NSSM](https://nssm.cc/release/nssm-2.24.zip) and add it to PATH
+2. Run:
+
+    ```powershell
+    nssm install CDE_API_Service "C:\cde-api\cde_api.exe"
+    ```
+
+3. Start the service:
+
+    ```powershell
+    nssm start CDE_API_Service
+    ```
+
+
+> Make sure the port is free (e.g. 40500) and your environment variables are set correctly.
+
+---
+
+## Endpoint
 
 ### `POST /query`
 
@@ -77,20 +84,17 @@ The server will start on port `40500` and expose one endpoint:
 }
 ```
 
-## ⚠️ Security Warning
+> ⚠️ This API executes raw SQL. This is dangerous if exposed to untrusted users.
 
-This API executes raw SQL. This is dangerous if exposed to untrusted users.
-🛠️ Upcoming Improvements
+### Upcoming
 
-### 🛠️ Upcoming Improvements
-- Token-based authentication (e.g. HMAC or JWT)
+- Token-based auth (e.g. HMAC or JWT)
 - Configurable query whitelisting
 - Logging control and access auditing
 - Rate limiting to prevent abuse
 
-> 💡 Feel free to contribute or open issues for feature requests.
+Feel free to contribute or open issues for feature requests.
 
-## 🧠 Author
+## 
 
-Maintained by @lucas-bonato.
-
+This app is maintained by [@lucas-bonato](https://www.github.com/lucas-bonato).
