@@ -1,6 +1,15 @@
-# CDE API - IBM DB2 Query Service
+# go-odbc-middleware
 
-A lightweight HTTP service built in Go to execute SQL queries against IBM DB2 databases using the [go\_ibm\_db](https://github.com/ibmdb/go_ibm_db) driver.
+
+![badge-db2](https://img.shields.io/badge/IBM%20DB2-supported-blue)
+![badge-sqlite](https://img.shields.io/badge/SQLite3-supported-blue)
+![badge-sqlite](https://img.shields.io/badge/PostgreSQL-upcoming-yellow)
+![badge-sqlite](https://img.shields.io/badge/MySQL-upcoming-yellow)
+![badge-sqlite](https://img.shields.io/badge/SQL%20Server-upcoming-yellow)
+
+**A lightweight, concurrent microservice API built in Go for executing SQL queries against multiple ODBC drivers.**
+
+---
 
 ## Requirements
 
@@ -84,7 +93,7 @@ This application can (and should) be installed as a system service for productio
 }
 ```
 
-> ⚠️ This API executes raw SQL. This is dangerous if exposed to untrusted users.
+> ⚠️ This API executes raw SQL. Do not expose to untrusted users.
 
 ### Upcoming
 
