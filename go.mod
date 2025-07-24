@@ -1,4 +1,4 @@
-module cde_api
+module github.com/bon4to/go-odbc-middleware
 
 go 1.23.4
 

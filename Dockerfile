@@ -32,10 +32,10 @@ RUN go mod download
 COPY . .
 
 # Build the binary
-RUN go build -o cde_api .
+RUN go build -o go-odbc-middleware ./cmd/server
 
 # Expose port
 EXPOSE 40500
 
 # Start the application
-CMD ["./cde_api"]
+CMD ["./go-odbc-middleware"]

@@ -1,5 +1,4 @@
 .dockerignore
-.env
 *.exe
 *.db
 *.tar.gz

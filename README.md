@@ -23,12 +23,16 @@
 
 ## How to build
 
+### Docker
+
+> Wait for Docker Compose instructions.
+
 ### Cross-compilation for Windows
 
 You need to set `GOOS` and `GOARCH`:
 
 ```bash
-GOOS=windows GOARCH=amd64 go build -o cde_api.exe main.go
+GOOS=windows GOARCH=amd64 go build -o app.exe main.go
 ```
 
 > ⚠️ The IBM DB2 driver must be available in the build machine. For Windows, you may need to compile inside a Windows VM or Docker container with the proper environment.
@@ -36,7 +40,7 @@ GOOS=windows GOARCH=amd64 go build -o cde_api.exe main.go
 ## Running the Server
 
 ```bash
-./cde_api.exe
+./app.exe
 ```
 
 The server will start on port `40500` and expose one endpoint.
@@ -51,13 +55,13 @@ This application can (and should) be installed as a system service for productio
 2. Run:
 
     ```powershell
-    nssm install CDE_API_Service "C:\cde-api\cde_api.exe"
+    nssm install ODBC_API_Service "C:\go-odbc-middleware\app.exe"
     ```
 
 3. Start the service:
 
     ```powershell
-    nssm start CDE_API_Service
+    nssm start ODBC_API_Service
     ```
 
 
@@ -106,4 +110,4 @@ Feel free to contribute or open issues for feature requests.
 
 ## 
 
-This app is maintained by [@lucas-bonato](https://www.github.com/lucas-bonato).
+This app is maintained by [@bon4to](https://www.github.com/bon4to).
