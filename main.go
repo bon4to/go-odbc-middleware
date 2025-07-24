@@ -31,14 +31,19 @@ func main() {
 	http.HandleFunc("/query", queryHandler)
 
 	port := ":40500"
-	log.Printf("Server running on %s", port)
+	logRequest("CDE", "Server running on: "+port, http.StatusOK, nil, 0)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
-func logRequest(level string, status int, r *http.Request, source int) {
+func logRequest(level string, text string, status int, r *http.Request, source int) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
+	if r == nil {
+		fmt.Printf("[%s] (%s) %s - %d\n", level, timestamp, text, status)
+		return
+	}
 	ip := r.RemoteAddr
-	log.Printf("[%s] (%s) %d | %s (%d - %s)", level, timestamp, status, ip, source, r.URL.Path)
+	fmt.Printf("[%s] (%s) %s - %d | %s (%d - %s)\n", level, timestamp, text, status, ip, source, r.URL.Path)
+	return
 }
 
 // queryHandler handles incoming HTTP POST requests to /query
@@ -56,13 +61,14 @@ func queryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Request from %s | Source: %d", r.RemoteAddr, data.Source)
+	logRequest("INF", "Query received", http.StatusOK, r, data.Source)
 
 	// Connect to the database using provided source index
 	db, err := connectDB(data.Source)
 	if err != nil {
 		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		log.Println("DB connection error:", err)
+		logRequest("ERR", "Database connection error:", http.StatusInternalServerError, r, data.Source)
+		log.Println("\n\n" + err.Error() + "\n\n") // log does a stderr write according to https://pkg.go.dev/log
 		return
 	}
 	defer db.Close()
@@ -70,7 +76,8 @@ func queryHandler(w http.ResponseWriter, r *http.Request) {
 	// Run the provided query
 	result, err := runQuery(db, data.Query)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Query error: %v", err), http.StatusInternalServerError)
+		logRequest("ERR", "Query execution error:", http.StatusInternalServerError, r, data.Source)
+		log.Println("\n\n" + err.Error() + "\n\n") // stderr write
 		return
 	}
 
@@ -169,7 +176,7 @@ func runQuery(db *sql.DB, query string) (*QueryResult, error) {
 		return nil, err
 	}
 
-	log.Printf("Query completed in %s", time.Since(start))
+	logRequest("INF", "Query completed in: "+time.Since(start).String(), http.StatusOK, nil, 0)
 
 	return &QueryResult{Columns: columns, Rows: results}, nil
 }
