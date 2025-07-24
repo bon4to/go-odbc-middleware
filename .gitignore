@@ -11,9 +11,6 @@
 *.mod
 *.sum
 
-# Executável do projeto
-cde_api
-
 # macOS
 .DS_Store
 
